@@ -1,16 +1,22 @@
 import fs from 'fs';
+import { __dirname } from '../path.js';
+const pathFile = __dirname + '/fs/products.json';
 
 export default class ProductManager{
     
     constructor(){
-        this.path = './products.json';
+        this.path = pathFile;
     }
 
     async getProducts(){
         try{
+            if(fs.existsSync(this.path)){
                 const data = await fs.promises.readFile(this.path, 'utf8');
                 const products = JSON.parse(data);
                 return products;
+            }else{
+                return [];
+            }
             
         }catch(error){
             console.error(`Error loading the products ${error}`);
@@ -18,21 +24,23 @@ export default class ProductManager{
         }
     }   
 
-    async addProduct(product ){
-        try {
-            product.id = this.#newId(products);
-            const products = await this.getProducts(); 
-            products.push(product);
-            
-            
-        } catch (error) {
-            
-        }
+async addProduct(product){
+    try {
+        const products = await this.getProducts(); 
+        const newId= await this.#newId(products);
+        const newProduct = {...product, id: newId};
+        products.push(newProduct);
+        await this.#saveProducts(products);
+        return newProduct;
+    } catch (error) {
+        console.error(`Could not add product: ${error}`);
+        return null;
     }
+}
 
     async #newId(products){             
         const maxId = await products.reduce((acc, product) =>{
-            return product.id > acc ? product.id : acc;
+            return product.id && product.id > acc ? product.id : acc;
         }, 0);
         return maxId + 1;
     }
@@ -44,8 +52,6 @@ export default class ProductManager{
             if(product){
                 return product;
             }return false;
-            
-            
         } catch (error) {
             console.error(`Product with Id ${id} not found`);
             return null;
@@ -71,7 +77,7 @@ export default class ProductManager{
         }
     }
 
-    async deteteProduct(id){
+    async deleteProduct(id){
         let products = await this.getProducts();
         const index =  products.findIndex(product => product.id === id);
         if (index !== -1) {
