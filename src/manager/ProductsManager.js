@@ -1,27 +1,22 @@
 import fs from 'fs';
 import { __dirname } from '../path.js';
-const pathFile = __dirname + '/fs/products.json';
+
 
 export default class ProductManager{
     
-    constructor(){
-        this.path = pathFile;
+    constructor(path){
+        this.path = path;
     }
 
     async getProducts(){
         try{
-            if(fs.existsSync(this.path)){
+            
                 const data = await fs.promises.readFile(this.path, 'utf8');
                 const products = JSON.parse(data);
                 return products;
-            }else{
-                return [];
-            }
-            
         }catch(error){
             console.error(`Error loading the products ${error}`);
-            return [];
-        }
+            }
     }   
 
 async addProduct(product){

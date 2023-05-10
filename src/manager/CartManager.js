@@ -1,11 +1,11 @@
 import fs from 'fs';
 import { __dirname } from '../path.js';
-const pathFile = __dirname + '/fs/cart.json';
+
 
 export default class CartManager{
 
-    constructor(){
-        this.cartPath = pathFile;
+    constructor(path){
+        this.cartPath = path;
     }
 
     async getCarts(){
