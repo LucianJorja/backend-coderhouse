@@ -1,9 +1,14 @@
 import ProductsDao from "../daos/mongodb/productsDao.js";
 const productsDao = new ProductsDao();
 
-export const getAllService = async () => {
+export const getAllService = async (page, limit, queryOptions, sortOptions) => {
     try {
-        const docs = await productsDao.getAllProducts();
+        const query = {};
+        if (queryOptions.category){
+            query.category = { $regex: queryOptions.category, $options: 'i' };
+        }
+        
+        const docs = await productsDao.getAllProducts(query, page, limit, sortOptions);
         return docs;
     } catch (error) {
         console.log(error);
@@ -18,7 +23,7 @@ export const createService = async (obj) => {
         console.log(error);
     }
 }
-export const getServiceById = async () => {
+export const getServiceById = async (id) => {
     try {
         const doc = await productsDao.getProductsById(id);
         if(!doc) throw new Error ('Product not found')

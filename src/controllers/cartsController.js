@@ -1,4 +1,4 @@
-import { getAllCartsService, createCartsService, getCartByIdService, updateProductQuantityService ,updateCartService, delCartService } from "../services/cartsServices.js";
+import { getAllCartsService, createCartsService, getCartByIdService , updateCartProductsService, updateProductQuantityService, addProductToCartService, updateCartService, removeProductFromCartService, delCartService } from "../services/cartsServices.js";
 
 export const getAllCartsController = async (req, res, next) => {
     try {
@@ -21,7 +21,7 @@ export const createCartController = async (req, res, next) => {
 
 export const getCartByIdController = async (req, res, next) => {
     try {
-        const { id } = req.body;
+        const { id } = req.params;
         const cart = await getCartByIdService(id);
         res.json(cart);
     } catch (error) {
@@ -29,16 +29,38 @@ export const getCartByIdController = async (req, res, next) => {
     }
 }
 
+export const addProductToCartController = async (req, res, next) => {
+    try {
+        const {productId, cartId} = req.params;
+        const exist = await getCartByIdService(cartId);
+        if (!exist) {
+            throw new Error('Product not found');
+        }
+        const newProduct = await addProductToCartService(productId, cartId);
+        res.json(newProduct);
+
+    } catch (error) {
+        next(error);
+    }
+}
+
+export const updateCartProductsController = async (req, res,next) => {
+    try {
+        const { cid } = req.paramas;
+        const { products} = req.body;
+        const updatedCart = await updateCartProductsService(cid, products);
+        res.json(updatedCart);
+    } catch (error) {
+        next(error);
+    }
+}
+
 export const updateProductQuantityController = async (req, res, next) => {
     try {
-        const { cartId, productId } = req.params;
-        const updated = await updateProductQuantityService(cartId, productId);
-
-        if (updated) {
-            res.json({ message: "Product quantity updated successfully" });
-        } else {
-            res.status(404).json({ error: "Product not found in cart" });
-        }
+        const { cid, pid } = req.params;
+        const { quantity } = req.body;
+        const updated = await updateProductQuantityService(cid, pid, quantity);
+        res.json(updated);
     } catch (error) {
         next(error);
     }
@@ -51,6 +73,16 @@ export const updateCartController = async (req, res, next) => {
         await getCartById(id);
         const updatedCart = await updateCartService({ userId, products });
         res.json(updatedCart);
+    } catch (error) {
+        next(error);
+    }
+}
+
+export const removeProductFromCartController = async (req, res, next) => {
+    try {
+        const { cid, pid} = req.params;
+        const cart = await removeProductFromCartService(cid, pid);
+        res.json(cart);
     } catch (error) {
         next(error);
     }

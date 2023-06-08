@@ -2,9 +2,9 @@ import { ProductsModel } from "./models/productsModels.js";
 
 export default class ProductsDao{
 
-    async getAllProducts() {
+    async getAllProducts(query, page = 1, limit = 10, sortOptions) {
         try {
-            const response = await ProductsModel.find({});
+            const response = await ProductsModel.paginate(query , { page, limit, sort: sortOptions});
             return response
         } catch (error) {
             console.log(error);

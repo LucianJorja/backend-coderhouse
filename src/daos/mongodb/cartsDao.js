@@ -3,7 +3,7 @@ import { CartModel } from "./models/cartsModels.js";
 export default class CartsDao {
     async getAllCarts() {
         try {
-            const cart = await CartModel.find();
+            const cart = await CartModel.find({})
             return cart;
         } catch (error) {
             console.log(error);
@@ -21,29 +21,51 @@ export default class CartsDao {
 
     async getCartById(id) {
         try {
-            const cart = await CartModel.findById(id);
+            const cart = await CartModel.findById(id)
+            .populate('products')
             return cart;
         } catch (error) {
             console.log(error);
         }
     }
 
-    async updateProductQuantity(cartId, productId) {
+    async updateCartProducts(cartId, products) {
         try {
-            const productExists = await CartModel.exists({
-                _id: cartId,
-                "products.productId": productId
-            });
-
-            if (productExists) {
-                await CartModel.updateOne(
-                    { _id: cartId, "products.productId": productId },
-                    { $inc: { "products.$.quantity": 1 } }
-                );
-                return true;
+            const cart = await CartModel.findById(cartId);
+            if (!cart){
+                throw new Error('cart not found');
             }
 
-            return false;
+            cart.products = products;
+            await cart.save();
+            return cart;
+        } catch (error) {
+            
+        }
+    }
+
+
+    async updateProductQuantity(cartId, productId, quantity){
+        try {
+            const cart = await CartModel.findById(cartId);
+            if (!cart) throw new Error('Cart not found');
+            const product = cart.products.find((p) => p.productId.toString() === productId);
+            if (!product) throw new Error('Product not found in the cart');
+
+            product.quantity = quantity;
+
+            await cart.save();
+            return cart;
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    async addProductToCart(productId, cartId) {
+        try {
+            const products = await CartModel.findById(cartId);
+            cart.products.push(productId);
+            products.save();
         } catch (error) {
             console.log(error);
         }
@@ -53,6 +75,22 @@ export default class CartsDao {
         try {
             const updatedCart = await CartModel.findByIdAndUpdate({ _id: id }, cartData);
             return updatedCart;
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    async removeProductFromCart(cartId, productId) {
+        try {
+            const cart = await CartModel.findById(cartId);
+            if (!cart) {
+                throw new Error('cart not found');
+            }
+
+            cart.products = cart.products.filter((product) => product.productId.toString() !== productId);
+
+            await cart.save();
+            return cart;
         } catch (error) {
             console.log(error);
         }

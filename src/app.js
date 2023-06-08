@@ -9,8 +9,6 @@ import { Server } from 'socket.io';
 import { errorHandler } from './middlewares/errorHandler.js';
 import MongoProductsRouter from './routes/MongoProductsRouter.js'
 import MongoCartRouter from './routes/MongoCartRouter.js'
-import MessagesRouter from './routes/MessagesRouter.js'
-import { getAllMsgController, createMsgController } from "./controllers/messagesControllers.js";
 
 
 
@@ -18,6 +16,7 @@ const app = express();
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(errorHandler);
 app.use(express.static(__dirname + '/public'));
 app.engine('handlebars', handlebars.engine());
 app.set('view engine', 'handlebars');
@@ -28,9 +27,9 @@ app.set('views', __dirname + '/views');
 // app.use('/', viewsRouter);
 app.use('/products', MongoProductsRouter);
 app.use('/carts', MongoCartRouter);
-app.use('/', MessagesRouter);
 
-app.use(errorHandler);
+
+
 
 const PORT = 8080
 const httpServer = app.listen(PORT, () => {
@@ -38,6 +37,10 @@ const httpServer = app.listen(PORT, () => {
 });
 
 const socketServer = new Server(httpServer);
+
+socketServer.on('connection', async (socket) => {
+    console.log('A user connected');
+
 
 // const arrayProducts = [];
 
@@ -57,36 +60,5 @@ const socketServer = new Server(httpServer);
 //     });
 // });
 
-socketServer.on('connection', async (socket) => {
-    console.log('A user connected');
 
-    socketServer.emit('messages', await getAllMsgController());
-
-    socket.on('disconnect', () => {
-        console.log('¡🔴 User disconnect!');
-    });
-
-    socket.on('newUser', (user) => {
-        console.log(`${user} is logged in`);
-    });
-
-    socket.on('chat:message', async (msg) => {
-        try {
-            const req = { body: msg };
-            const res = { json: () => { } };
-            await createMsgController(req, res, () => { });
-            socketServer.emit('messages', await getAllMsgController(req, res, () => { }));
-        } catch (error) {
-            console.log(error);
-        }
-    });
-
-
-    socket.on('newUser', (user) => {
-        socket.broadcast.emit('newUser', user);
-    });
-
-    socket.on('chat:typing', (data) => {
-        socket.broadcast.emit('chat:typing', data);
-    })
 });
