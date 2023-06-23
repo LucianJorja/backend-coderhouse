@@ -1,4 +1,5 @@
 import { Router } from "express";
+import { githubResponse } from "../controllers/userController.js";
 const router = Router();
 // import { __dirname } from "../path.js";
 // import ProductManager from "../manager/ProductsManager.js";
@@ -50,11 +51,17 @@ router.get('/error-login', (req, res) =>{
 })
 router.get('/products', (req, res) =>{
     const email = req.session.email;
-    res.render('products', {email})
+    console.log('email', email);
+    const userData = req.session.userData;
+    console.log('');
+    res.render('products', {email, userData})
 })
 router.get('/logout', (req, res) =>{
     res.render('login')
 })
+
+router.get('/profile-github', githubResponse);
+
 
 export default router;
 

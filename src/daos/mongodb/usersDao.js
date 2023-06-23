@@ -1,18 +1,20 @@
 import { userModel } from "./models/userModel.js";
-
+import { createHash, isValidPassword} from "../../path.js";
 export default class UserDao {
     async createUser(user) {
         try {
-            const {email, password} = user;
-            const existUser = await userModel.find({email, password});
-            if(existUser.length === 0){
+            const { email, password} = user;
+            const existUser = await userModel.findOne({email});
+            if(!existUser){
                 if(email === 'adminCoder@coder.com' && password === 'adminCod3r123'){
-                    return await userModel.create({...user, role: 'admin'});
+                    const newUser = await userModel.create({...user, password: createHash(password), role: 'admin'});
+                    return newUser;
+                }else{
+                    const newUser = await userModel.create({...user, password: createHash(password)});
+                    return newUser;
                 }
-                const newUser = await userModel.create(user);
-                return newUser;
             }else{
-                return null;
+                return false;
             }
         } catch (error) {
             console.log(error);
@@ -23,12 +25,37 @@ export default class UserDao {
     async loginUser(user) {
         try {
             const {email, password} = user;
-            const userExists = await userModel.find({email, password});
-            if(userExists.length !== 0){
-                return userExists
-            }else{
-                return null;
-            }
+            const userExists = await this.getByEmail(email);
+            if(userExists){
+                const passValid = isValidPassword(password, userExists);
+                if(!passValid) return false
+                else return userExists;
+            } return false;
+        } catch (error) {
+            console.log(error);
+            throw new Error;
+        }
+    }
+
+    async getById(id){
+        try {
+            const userExist = await userModel.findById(id);
+            // console.log(userExist);
+            if(userExist){
+                return userExist;
+            } return null;
+        } catch (error) {
+            console.log(error);
+            throw new Error('Error fetching user by ID');
+        }
+    }
+
+    async getByEmail(email){
+        try {
+            const userExist = await userModel.findOne({email});
+            if(userExist){
+                return userExist;
+            } return false;
         } catch (error) {
             console.log(error);
             throw new Error;

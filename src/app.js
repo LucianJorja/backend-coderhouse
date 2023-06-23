@@ -12,7 +12,11 @@ import { Server } from 'socket.io';
 import { errorHandler } from './middlewares/errorHandler.js';
 import MongoProductsRouter from './routes/MongoProductsRouter.js'
 import MongoCartRouter from './routes/MongoCartRouter.js'
-import UserRouter from './routes/UserRouter.js'
+import UsersRouter from './routes/UsersRouter.js'
+import passport from 'passport';
+import './passport/local.js'
+import './passport/github.js'
+
 
 
 
@@ -41,11 +45,13 @@ app.use(
             ttl: 180,
         }),
     })
-)
-
-
+    )
+app.use(passport.initialize());
+app.use(passport.session());
+    
+    
 app.use('/views', viewsRouter);
-app.use('/users', UserRouter);
+app.use('/users', UsersRouter);
 app.use('/products', MongoProductsRouter);
 app.use('/carts', MongoCartRouter);
 
