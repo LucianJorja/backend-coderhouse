@@ -20,24 +20,11 @@ const signup = async (req, email, pasword, done) =>{
 }
 
 const login = async (req, email, password, done) =>{
-    try {
         const user = { email, password };
         const userLogin = await userDao.loginUser(user)
         if (!userLogin) return done(null, false);
-        req.session.email = userLogin.email;
-        console.log('email', req.session.email);
-        req.session.userData = {
-            firstName: userLogin.firstName,
-            lastName: userLogin.lastName,
-            email: userLogin.email,
-            age: userLogin.age,
-            role: userLogin.role
-        };
-        console.log('user', req.session.userData);
-        return done(null, userLogin);
-    } catch (error) {
-        console.log(error);
-    }
+        return done (null, userLogin)
+
 }
 
 const signupStrategy = new LocalStrategy(StrategyOptions, signup);

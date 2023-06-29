@@ -11,15 +11,10 @@ export const registerResponse = (req, res, next) => {
 
 export const loginResponse = async (req, res, next) => {
     try {
-        const user = await userDao.getById(req.session.passport.user);
-        const { firstName, lastName, email, age, role } = user;
-        req.session.userData = {
-            firstName,
-            lastName,
-            email,
-            age,
-            role
-        };
+        const user = await userDao.getById(req.session.passport.user)
+        console.log('user', user);
+        const { firstName, lastName, email, age } = user;
+        res.render('products', {firstName, lastName, email, age})
     } catch (error) {
         next(error);
     }
@@ -27,17 +22,10 @@ export const loginResponse = async (req, res, next) => {
 
 export const githubResponse = async (req, res, next) => {
     try {
-        const { firstName, lastName, email, role, isGithub } = req.user;
-        res.render('profile', {
-            userData: {
-                firstName,
-                lastName,
-                email,
-                role,
-                isGithub,
-            },
-        });
+        const {firstName, lastName, email} = req.user;
+        res.render('profile', {firstName, lastName, email})
     } catch (error) {
         next(error);
     }
 };
+

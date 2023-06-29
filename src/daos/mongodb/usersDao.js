@@ -27,7 +27,7 @@ export default class UserDao {
             const {email, password} = user;
             const userExists = await this.getByEmail(email);
             if(userExists){
-                const passValid = isValidPassword(password, userExists);
+                const passValid = isValidPassword( userExists, password );
                 if(!passValid) return false
                 else return userExists;
             } return false;
@@ -40,10 +40,9 @@ export default class UserDao {
     async getById(id){
         try {
             const userExist = await userModel.findById(id);
-            // console.log(userExist);
             if(userExist){
                 return userExist;
-            } return null;
+            } return false  
         } catch (error) {
             console.log(error);
             throw new Error('Error fetching user by ID');
