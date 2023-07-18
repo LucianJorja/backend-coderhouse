@@ -16,6 +16,7 @@ import UsersRouter from './routes/UsersRouter.js'
 import passport from 'passport';
 import './passport/local.js'
 import './passport/github.js'
+import config from '../config.js';
 
 
 
@@ -37,9 +38,6 @@ app.use(
         secret:'sessionKey',
         resave: false,
         saveUninitialized: true,
-        cookie: {
-            maxAge : 180000
-        },
         store: new MongoStore({
             mongoUrl: 'mongodb+srv://admin:12344@cluster0.lywpi16.mongodb.net/',
             ttl: 180,
@@ -58,7 +56,7 @@ app.use('/carts', MongoCartRouter);
 
 
 
-const PORT = 8080
+const PORT = config.PORT || 8080;
 const httpServer = app.listen(PORT, () => {
     console.log(`server listening on port ${PORT}`);
 });

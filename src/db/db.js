@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
+import config from '../../config.js';
 
-const connectionString = 'mongodb+srv://admin:12344@cluster0.lywpi16.mongodb.net/';
+const connectionString = config.MONGO_URL;
 
 try {
     await mongoose.connect(connectionString);

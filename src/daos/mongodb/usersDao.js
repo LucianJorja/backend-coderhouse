@@ -1,12 +1,13 @@
 import { userModel } from "./models/userModel.js";
 import { createHash, isValidPassword} from "../../path.js";
+import config from '../../../config.js';
 export default class UserDao {
     async createUser(user) {
         try {
             const { email, password} = user;
             const existUser = await userModel.findOne({email});
             if(!existUser){
-                if(email === 'adminCoder@coder.com' && password === 'adminCod3r123'){
+                if(email === config.ADMIN_EMAIL && password === config.ADMIN_PASSWORD){
                     const newUser = await userModel.create({...user, password: createHash(password), role: 'admin'});
                     return newUser;
                 }else{

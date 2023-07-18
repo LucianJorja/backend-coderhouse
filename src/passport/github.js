@@ -2,11 +2,12 @@ import { Strategy as GithubStrategy } from 'passport-github2';
 import passport from 'passport';
 import UserDao from "../daos/mongodb/usersDao.js";
 const userDao = new UserDao();
+import config from '../../config.js';
 
 const strategyOptions = {
-    clientID: 'Iv1.7f578ec6e1d112de',
-    clientSecret: 'a631119c81f1ef5786b0f47dc7ef16d6e9e2dcd7',
-    callbackURL: 'http://localhost:8080/users/profile-github'
+    clientID: config.CLIENT_ID,
+    clientSecret: config.GITHUB_KEY,
+    callbackURL: config.CALLBACK_URL
 };
 
 const registerOrLogin = async (accessToken, refreshToken, profile, done) => {
