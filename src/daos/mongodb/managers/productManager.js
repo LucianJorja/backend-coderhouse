@@ -1,4 +1,4 @@
-import { ProductsModel } from "./models/productsModels.js";
+import { ProductsModel } from "../models/productsModels.js";
 
 export default class ProductsDao{
 

@@ -1,4 +1,4 @@
-import UserDao from "../daos/mongodb/usersDao.js";
+import UserDao from "../daos/mongodb/managers/userManager.js";
 const userDao = new UserDao();
 import passport from "passport";
 import { Strategy as LocalStrategy } from "passport-local";

@@ -31,8 +31,15 @@
             type: Boolean,
             required: true,
             default: false,
+        },
+        cartId: {type: mongoose.Schema.Types.ObjectId,
+            ref: 'carts', 
+            required: true
         }
-
     })
 
-    export const userModel = mongoose.model('Users', userSchema)
+    userSchema.pre('find', function () {
+        this.populate('carts');
+    });
+    
+export const userModel = mongoose.model('Users', userSchema)

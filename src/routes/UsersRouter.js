@@ -1,14 +1,13 @@
 import { Router } from "express";
 import passport from "passport";
-import { githubResponse } from "../controllers/userController.js";
-import { frontResponse } from "../passport/local.js";
-
-
-
+import UserController from "../controllers/userController.js";
+import { checkAuth } from '../middlewares/authJwt.js';
+const controller = new UserController();
 const router = Router();
 
-router.post('/register', passport.authenticate('register', frontResponse.register))
-router.post('/login', passport.authenticate('login', frontResponse.login))
+router.post('/register', controller.register)
+router.post('/login', controller.login)
+router.get('/products', checkAuth, controller.profile);
 
 
 router.get('/logout', (req, res) => {
@@ -17,6 +16,6 @@ router.get('/logout', (req, res) => {
 })
 
 router.get('/register-github', passport.authenticate('github', { scope: ['user:email'] }))
-router.get('/profile-github', passport.authenticate('github', { scope: ['user:email'] }), githubResponse)
+router.get('/profile-github', passport.authenticate('github', { scope: ['user:email'] }), controller.githubResponse)
 
 export default router;

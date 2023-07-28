@@ -1,4 +1,4 @@
-import CartsDao from "../daos/mongodb/cartsDao.js";
+import CartsDao from "../daos/mongodb/managers/cartManager.js";
 const cartsDao = new CartsDao();
 
 export const getAllCartsService = async () => {
