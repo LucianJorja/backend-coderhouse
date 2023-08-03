@@ -31,12 +31,13 @@ export const getCartByIdController = async (req, res, next) => {
 
 export const addProductToCartController = async (req, res, next) => {
     try {
-        const {productId, cartId} = req.params;
+        const cartId = req.user.cartId;
+        const productId = req.params.prodId;
         const exist = await getCartByIdService(cartId);
         if (!exist) {
             throw new Error('Product not found');
         }
-        const newProduct = await addProductToCartService(productId, cartId);
+        const newProduct = await addProductToCartService(productId, cartId, quantity);
         res.json(newProduct);
 
     } catch (error) {

@@ -15,7 +15,8 @@ import passport from 'passport';
 import './passport/local.js'
 import './passport/github.js'
 import config from '../config.js';
-
+import { isAdmin } from './middlewares/authRole.js';
+import TicketRouter from './routes/TicketRouter.js'
 
 
 
@@ -48,6 +49,8 @@ app.use('/views', viewsRouter);
 app.use('/users', UsersRouter);
 app.use('/products', MongoProductsRouter);
 app.use('/carts', MongoCartRouter);
+app.use('/tickets', TicketRouter)
+app.use('/admin', isAdmin)
 
 
 

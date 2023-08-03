@@ -10,16 +10,21 @@ export const getAllCartsService = async () => {
     }
 }
 
-export const addProductToCartService = async (productId, cartId) => {
+export const addProductToCartService = async (productId, cartId, quantity) => {
     try {
         const cart = await cartsDao.getCartById(cartId);
         if (!cart) {
             throw new Error('cart not found');
         }
-        cart.products.push({
-            productId: productId,
-            quantity: 1,
-        });
+        const existingProductOnCart = cart.products.findIndex((product) => product.productId === productId);
+        if (!existingProductOnCart == -1) {
+            cart.products[existingProductOnCart].quantity += quantity;
+        }else{
+            cart.products.push({
+                productId: productId,
+                quantity: quantity,
+            });
+        }
 
         await cart.save();
         return cart;

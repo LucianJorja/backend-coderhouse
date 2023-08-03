@@ -1,28 +1,48 @@
 import Controllers from "./classController.js";
 import UserService from "../services/userServices.js";
-import { renderView } from "../middlewares/auth.js";
+import { createResponse, renderView } from "../middlewares/auth.js";
 import { userDto } from "../daos/mongodb/dtos/userDto.js";
+import UserManager from "../daos/mongodb/managers/userManager.js";
+import { createCartsService } from "../services/cartsServices.js";
 const userService = new UserService();
-
+const userManager = new UserManager();
 export default class UserController extends Controllers {
     constructor() {
         super(userService)
     }
 
+    getUserDto = async (req, res, next) =>  {
+        try {
+            const isLoggedIn = req.session.passport
+            if (!isLoggedIn){
+                renderView(res, 'products', isLoggedIn);
+            }else {
+                const user = await userManager.getUserById(req.session.user);
+                const userDto = new userDto(user);
+                req.session.userDto = userDto;
+                renderView(res, 'products', userDto);
+            }
+        } catch (error) {
+            next(error)
+        }
+    }
+
     register = async (req, res, next) => {
         try {
-            const token = await this.service.register(req.body);
-            renderView(res, 'register', { token });
+            const newCart = await createCartsService()
+            const userData = {...req.body, cartId: newCart._id}
+            const token = await this.service.register(userData);
+            const user = {token, cartId: newCart._id}
+            createResponse(res, 200, user);
         } catch (error) {
-            renderView(res, 'errorRegister', { error: error.message });
+            next(error);
         }
     }
 
     login = async (req, res, next) => {
         try {
             const userExist = await this.service.login(req.body);
-            const { firstName, lastName, email, age } = userExist;
-            renderView(res, 'products', { firstName, lastName, email, age });
+            createResponse(res, 200, userExist);
         } catch (error) {
             renderView(res, 'errorLogin', { error: error.message });
         }

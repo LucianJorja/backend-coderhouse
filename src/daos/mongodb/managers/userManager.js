@@ -43,7 +43,7 @@ export default class UserManager extends MongoDao {
                     return token;
                 }
             }else{
-                return false;
+                throw new Error('Invalid');
             }
         } catch (error) {
             console.log(error);
@@ -54,7 +54,7 @@ export default class UserManager extends MongoDao {
     async login(user) {
         try {
             const {email, password} = user;
-            const userExists = await this.getByEmail(email);
+            const userExists = await this.model.findOne({email});
             if(userExists){
                 const passValid = isValidPassword( userExists, password );
                 if(!passValid) return false

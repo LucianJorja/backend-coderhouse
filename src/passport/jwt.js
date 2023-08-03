@@ -1,8 +1,8 @@
 import passport from "passport";
 import { ExtractJwt, Strategy as jwtStrategy } from "passport-jwt";
 import config from '../../config.js';
-import UserDao from "../daos/mongodb/managers/userManager.js";
-const userDao = new UserDao();
+import UserManager from "../daos/mongodb/managers/userManager.js";
+const userManager = new UserManager();
 
 
 const strategyOptions = {
@@ -21,7 +21,7 @@ const strategyOptionsCookie = {
 }
 
 const verifyToken = async (req, res, next) => {
-    const user = await userDao.getById(jwt_payload.user_id);
+    const user = await userManager.getById(jwt_payload.user_id);
     if(!user) return done(null, false)
     return done(null, jwt_payload)
 }

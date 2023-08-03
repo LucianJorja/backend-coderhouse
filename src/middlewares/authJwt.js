@@ -1,13 +1,13 @@
 import jwt from "jsonwebtoken";
 import config from '../../config.js';
-import UserDao from "../daos/mongodb/managers/userManager.js";
+import UserManager from "../daos/mongodb/managers/userManager.js";
 
-const userDao = new UserDao();
+const userManager = new UserManager();
 
 const PRIVATE_KEY = config.SECRET_KEY_JWT;
 
 export const checkAuth = async (req, res, next) => {
-    const authHeader = req.get('Autorization');
+    const authHeader = req.get('Authorization');
     
     if (!authHeader) return res.status(401).json({msg: 'Unauthorized'});
 
@@ -17,7 +17,7 @@ export const checkAuth = async (req, res, next) => {
             token,
             PRIVATE_KEY
         )
-        const user = await userDao.getById(decode.userId);
+        const user = await userManager.getById(decode.userId);
         
         if(!user) return res.status(400).json({msg: 'Unauthorized'});
         req.user = user;

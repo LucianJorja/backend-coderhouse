@@ -46,28 +46,6 @@ export default class CartsDao {
     }
 
 
-    async purchaseCart(cartId) {
-        try {
-            const cart = await CartModel.findById(cartId).populate("products");
-            if (!cart) {
-                throw new Error("Cart not found");
-            }
-
-            const ticketData = {
-                code: generateUniqueTicketCode(),
-                purchase_datetime: new Date(),
-                amount: calculateTotalAmount(cart.products),
-                purchaser: cart.userId,
-            };
-
-            const ticket = await TicketModel.create(ticketData);
-            return ticket;
-        } catch (error) {
-            console.log(error);
-        }
-    }
-
-
     async updateProductQuantity(cartId, productId, quantity) {
         try {
             const cart = await CartModel.findById(cartId);
