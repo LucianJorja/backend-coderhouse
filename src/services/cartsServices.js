@@ -1,4 +1,5 @@
 import CartsDao from "../daos/mongodb/managers/cartManager.js";
+import { ProductsModel } from "../daos/mongodb/models/productsModels.js";
 const cartsDao = new CartsDao();
 
 export const getAllCartsService = async () => {
@@ -12,19 +13,25 @@ export const getAllCartsService = async () => {
 
 export const addProductToCartService = async (productId, cartId, quantity) => {
     try {
-        const cart = await cartsDao.getCartById(cartId);
+        const [cart, product] = await Promise.all([
+            cartsDao.getCartById(cartId),
+            ProductsModel.findById(productId)
+        ]);
+
         if (!cart) {
             throw new Error('cart not found');
         }
-        const existingProductOnCart = cart.products.findIndex((product) => product.productId === productId);
-        if (!existingProductOnCart == -1) {
-            cart.products[existingProductOnCart].quantity += quantity;
-        }else{
-            cart.products.push({
-                productId: productId,
-                quantity: quantity,
-            });
+
+        if (!product) {
+            throw new Error('product not found');
         }
+
+        cart.products.push({
+            productId: productId,
+            quantity: quantity,
+            price: product.price,
+            stock: product.stock
+        });
 
         await cart.save();
         return cart;

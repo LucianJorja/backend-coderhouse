@@ -31,11 +31,14 @@ export const getCartByIdController = async (req, res, next) => {
 
 export const addProductToCartController = async (req, res, next) => {
     try {
-        const cartId = req.user.cartId;
-        const productId = req.params.prodId;
+        const { productId, cartId } = req.params;
+        const {quantity} = req.body;
+        if (!productId || !cartId || !quantity) {
+            throw new Error('Invalid input parameters');
+        }
         const exist = await getCartByIdService(cartId);
         if (!exist) {
-            throw new Error('Product not found');
+            throw new Error('Cart not found');
         }
         const newProduct = await addProductToCartService(productId, cartId, quantity);
         res.json(newProduct);

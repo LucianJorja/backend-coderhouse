@@ -11,6 +11,14 @@ const cartSchema = new mongoose.Schema({
             type: Number,
             required: true,
             default: 1,
+        },
+        price: {
+            type: Number,
+            required: false
+        },
+        stock: {
+            type: Number,
+            required: false
         }
     }]
 });
@@ -19,12 +27,7 @@ cartSchema.pre('find', function(){
     this.populate('products')
 })
 
-cartSchema.virtual('products.price', {
-    ref: 'products',
-    localField: 'products.productId',
-    foreignField: '_id',
-    justOne: true
-});
+
 
 
 export const CartModel = mongoose.model('cart', cartSchema);

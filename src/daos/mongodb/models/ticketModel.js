@@ -15,10 +15,18 @@ const ticketSchema = new mongoose.Schema({
                 type: Number,
                 required: true,
                 default: 1,
+            },
+            price: {
+                type: Number,
+                required: true
+            },
+            stock: {
+                type: Number,
+                required: true
             }
         }]}
     ],
-    amount: { type: Number, required: true },
+    amount: { type: Number, required: false },
     purchaser: { type: String, required: true },
 });
 

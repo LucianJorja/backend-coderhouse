@@ -9,8 +9,8 @@ import { updateCartProductsService, updateProductQuantityService } from "../serv
 const cartsDao = new CartsDao();
 import { codeGenerator } from "../middlewares/auth.js";
 
-export class TicketController extends Controllers{
-    constructor(){
+export class TicketController extends Controllers {
+    constructor() {
         super(ticketService);
     }
 
@@ -27,14 +27,14 @@ export class TicketController extends Controllers{
         try {
             const user = await userManager.getById(req.session.passport.user);
             const ticket = await getUserTicket(user.email);
-            if(!ticket){
-                res.status(404).json({message:'No ticket found'});
-            }else if(ticket.length > 0){
+            if (!ticket) {
+                res.status(404).json({ message: 'No ticket found' });
+            } else if (ticket.length > 0) {
                 createResponse(res, 200, ticket);
-            }else{
-                res.status(404).json({message:'No ticket found'});
+            } else {
+                res.status(404).json({ message: 'No ticket found' });
             }
-            
+
         } catch (error) {
             next(error);
         }
@@ -47,53 +47,50 @@ export class TicketController extends Controllers{
             const ticketCode = codeGenerator();
             const newDate = new Date();
             let cartAmount = 0;
-            let productsRemaining = []
-            userCart.products.forEach((product) => {
-                const {quantity, productId} = product
-                console.log("Product ID:", productId);
-                console.log("Product Quantity:", quantity);
-                console.log("Product Price:", productId.price);
-                console.log("Product Price:", productId.stock);
-                if(quantity > productId.stock){
-                    const quantityRemaining = quantity - productId.stock;
+            let productsRemaining = [];
+            const updatedProducts = [];
+            for (const product of userCart.products) {
+                const { quantity, productId } = product;
+                if (quantity > product.stock) {
+                    const quantityRemaining = quantity - product.stock;
                     product.quantity = productId.stock;
                     productsRemaining.push({
                         quantity: quantityRemaining,
                         productId: productId,
                     });
-                    userCart.products = userCart.products.filter((prod) => prod.quantity > 0);
+                } else {
+                    updatedProducts.push(product);
                 }
-                const totalPriceProduct = product.quantity * productId.price;
+                const totalPriceProduct = product.quantity * product.price;
                 cartAmount += totalPriceProduct;
-            })
-
+            }
+            userCart.products = updatedProducts;
             const ticket = {
                 created_at: newDate,
                 code: ticketCode,
                 purchaser: user.email,
-                cart: userCart.products,
+                cart: userCart,
                 productsRemaining: productsRemaining,
-                amount: cartAmount
-            }
-            const response = await ticketService.createTicket(ticket)
-            createResponse(res, 200, response)
-        }catch (error) {
+                amount: cartAmount || 0
+            };
+            const response = await ticketService.createTicket(ticket);
+            createResponse(res, 200, response);
+        } catch (error) {
             next(error);
         }
     }
 
-    async finalizePurchase (req, res, next){
+    async finalizePurchase(req, res, next) {
         try {
             const cartId = req.user.cartId;
             const ticket = req.body;
-            const productsRemaining = ticket.productsRemaining
-            await updateCartProductsService(cartId, productsRemaining);
-            const savePurchase = await createTicket(ticket);
-            ticket.products.forEach (async (product) => {
-                const {quantity, _id} = product;
-                const stockRemaining = _id.stock - quantity;
-                await updateProductQuantityService(_id, stockRemaining)
-            })
+            ticket.purchaser = req.user.email;
+            ticket.amount = (ticket.cart);
+            ticket.code = codeGenerator();
+
+            await updateCartProductsService(cartId, ticket.productsRemaining);
+            const savePurchase = await ticketService.createTicket(ticket);
+
             createResponse(res, 200, savePurchase);
         } catch (error) {
             next(error);
