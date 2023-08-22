@@ -8,7 +8,7 @@ export default class Services {
             const items = await this.manager.getAll();
             return items;
         } catch (error) {
-            console.log(error);
+            throw new Error(error.message);
         }
     };
 
@@ -18,7 +18,7 @@ export default class Services {
             if (!item) return false
             else return item;
         } catch (error) {
-            console.log(error);
+            throw new Error(error.message);
         }
     };
 
@@ -28,7 +28,7 @@ export default class Services {
             if (!newItem) return false;
             else return newItem;
         } catch (error) {
-            console.log(error);
+            throw new Error(error.message);
         }
     };
 
@@ -42,7 +42,7 @@ export default class Services {
                 return itemUpd;
             }
         } catch (error) {
-            console.log(error);
+            throw new Error(error.message);
         }
     };
 
@@ -51,7 +51,7 @@ export default class Services {
             const itemDel = await this.manager.delete(id);
             return itemDel;
         } catch (error) {
-            console.log(error);
+            throw new Error(error.message);
         }
     };
 }

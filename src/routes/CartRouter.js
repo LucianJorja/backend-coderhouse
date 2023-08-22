@@ -1,58 +1,17 @@
 import { Router } from "express";
+import { getAllCartsController, createCartController, getCartByIdController, updateProductQuantityController, addProductToCartController ,removeProductFromCartController, updateCartController, deleteCartController, updateCartProductsController } from "../controllers/cartsController.js";
+import { cartValidator} from "../middlewares/cartValidator.js";
 const router = Router();
-import { __dirname } from '../path.js';
-import CartManager from "../manager/CartManager.js";
-const cartManager = new CartManager(__dirname + '/fs/cart.json');
 
-router.get('/', async (req, res) => {
-    try {
-        const carts = await cartManager.getCarts();
-        res.status(200).json(carts);
-    } catch (error) {
-        console.error(`Error getting carts: ${error}`);
-        res.status(500).send('Server error');
-    }
-})
 
-router.post('/', async (req, res) => {
-    try {
-        const cart = await cartManager.addCart();
-        res.status(200).json(cart);
-    } catch (error) {
-        console.error(`Error creating cart: ${error}`);
-        res.status(500).send('Server error');
-    }
-})
-
-router.get('/:id', async (req, res) => {
-    try {
-        const cartId = parseInt(req.params.id);
-        const cart = await cartManager.getCartById(cartId);
-        if (cart) {
-            res.status(200).json(cart);
-        } else {
-            res.status(404).send('Cart not found');
-        }
-    } catch (error) {
-        console.error(`Error getting cart: ${error}`);
-        res.status(500).send('Server error');
-    }
-})
-
-router.post('/:cartId/product/:idProd', async (req, res) => {
-    try {
-        const cartId = parseInt(req.params.cartId);
-        const idProd = parseInt(req.params.idProd);
-        const cart = await cartManager.addProductToCart(cartId, idProd);
-        if (cart) {
-            res.status(200).json(cart);
-        }else{
-            res.status(404).send('Cart not found');
-        }
-    } catch (error) {
-        console.error(`Error adding product to cart: ${error}`);
-        res.status(500).send('Server error');
-    }
-})
+router.get('/', getAllCartsController);
+router.get('/:id', getCartByIdController);
+router.post('/', createCartController);
+router.post('/:cartId/products/:productId', cartValidator, addProductToCartController);
+router.put('/:cid/products/:pid', updateProductQuantityController);
+router.put('/:cid', updateCartProductsController);
+router.put('/:id', updateCartController);
+router.delete('/:cid/products/:pid', removeProductFromCartController);
+router.delete('/:id', deleteCartController);
 
 export default router;

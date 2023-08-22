@@ -7,7 +7,7 @@ export const getAllCartsService = async () => {
         const carts = await cartsDao.getAllCarts();
         return carts;
     } catch (error) {
-        console.log(error);
+        throw new Error(error.message);
     }
 }
 
@@ -36,7 +36,7 @@ export const addProductToCartService = async (productId, cartId, quantity) => {
         await cart.save();
         return cart;
     } catch (error) {
-        console.log(error);
+        throw new Error(error.message);
     }
 }
 
@@ -46,7 +46,7 @@ export const createCartsService = async (cartData) => {
         if (!newCart) throw new Error('Validation failed')
         else return newCart;
     } catch (error) {
-        console.log(error);
+        throw new Error(error.message);
     }
 }
 
@@ -56,7 +56,7 @@ export const getCartByIdService = async (id) => {
         if (!cart) throw new Error('cart not found');
         else return cart;
     } catch (error) {
-
+        throw new Error(error.message);
     }
 }
 
@@ -66,7 +66,7 @@ export const updateProductQuantityService = async (cartId, productId, quantity) 
         const updated = await cartsDao.updateProductQuantity(cartId, productId, quantity);
         return updated;
     } catch (error) {
-        console.log(error);
+        throw new Error(error.message);
     }
 }
 
@@ -75,7 +75,7 @@ export const updateCartProductsService = async (cartId, products) => {
         const updatedCart = await cartsDao.updateCartProducts(cartId, products);
         return updatedCart;
     } catch (error) {
-        console.log(error);
+        throw new Error(error.message);
     }
 }
 
@@ -89,7 +89,7 @@ export const updateCartService = async (id, cartData) => {
             return updatedCart;
         }
     } catch (error) {
-        console.log(error);
+        throw new Error(error.message);
     }
 }
 
@@ -98,7 +98,7 @@ export const removeProductFromCartService = async (cartId, productId) =>{
         const cart = await cartsDao.removeProductFromCart(cartId, productId);
         return cart;
     } catch (error) {
-        console.log(error);
+        throw new Error(error.message);
     }
 }
 
@@ -107,6 +107,6 @@ export const delCartService = async (id) => {
         const deletedCart = await cartsDao.deleteCart(id);
         return deletedCart;
     } catch (error) {
-        console.log(error);
+        throw new Error(error.message);
     }
 }

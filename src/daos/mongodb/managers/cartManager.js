@@ -77,7 +77,7 @@ export default class CartsDao {
             const updatedCart = await CartModel.findByIdAndUpdate({ _id: id }, cartData);
             return updatedCart;
         } catch (error) {
-            console.log(error);
+            throw new Error(error.message);
         }
     }
 
@@ -93,7 +93,7 @@ export default class CartsDao {
             await cart.save();
             return cart;
         } catch (error) {
-            console.log(error);
+            throw new Error(error.message);
         }
     }
 
@@ -101,7 +101,7 @@ export default class CartsDao {
         try {
             await CartModel.findByIdAndDelete(id);
         } catch (error) {
-            console.log(error);
+            throw new Error(error.message);
         }
     }
 }

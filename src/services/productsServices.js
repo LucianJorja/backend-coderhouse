@@ -20,7 +20,7 @@ export const createService = async (obj) => {
         if (!newProduct) throw new Error ('Validation Error')
         else return newProduct;
     } catch (error) {
-        console.log(error);
+        throw new Error(error.message);
     }
 }
 export const getServiceById = async (id) => {
@@ -29,7 +29,7 @@ export const getServiceById = async (id) => {
         if(!doc) throw new Error ('Product not found')
         else return doc;
     } catch (error) {
-        console.log(error);
+        throw new Error(error.message);
     }
 }
 export const updateService = async (id, obj) => {
@@ -42,7 +42,7 @@ export const updateService = async (id, obj) => {
             return productUpdated;
         }
     } catch (error) {
-        console.log(error);
+        throw new Error(error.message);
     }
 }
 export const deleteServiceById = async (id) => {
@@ -50,7 +50,7 @@ export const deleteServiceById = async (id) => {
         const delProduct = await productsDao.deleteProductById(id);
         return delProduct;
     } catch (error) {
-        console.log(error);
+        throw new Error(error.message);
     }
 }
 

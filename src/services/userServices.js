@@ -13,7 +13,7 @@ export default class UserService extends Services{
             const token = await this.manager.register(user);
             return token;
         } catch (error) {
-            console.log(error);
+            throw new Error(error.message);
         }
     }
 
@@ -22,7 +22,7 @@ export default class UserService extends Services{
             const userExists = await this.manager.login(user);
             return userExists;
         } catch (error) {
-            console.log(error);
+            throw new Error(error.message);
         }
     }
 }

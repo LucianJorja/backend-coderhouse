@@ -1,0 +1,12 @@
+[34minfo[39m | Aug-16-2023 04:38:39 | GET /loggerTest
+[34minfo[39m | Aug-16-2023 04:39:24 | GET /loggerTest
+undefined | Aug-16-2023 04:40:52 | GET /loggerTest
+[object Object] | Aug-16-2023 04:42:17 | GET /loggerTest
+[34minfo[39m | Aug-16-2023 04:44:50 | GET /loggerTest
+[34MINFO[39M | Aug-16-2023 04:46:17 | GET /loggerTest
+[Aug-16-2023 04:47:11] [34minfo[39m: GET /loggerTest
+undefined | Aug-16-2023 04:47:55 | GET /loggerTest
+[34minfo[39m | Aug-16-2023 04:49:04 | GET /loggerTest
+[34minfo[39m | Aug-16-2023 04:55:45 | GET /loggerTest
+error | Aug-22-2023 03:59:48 | Error log in production for testing
+error | Aug-22-2023 04:00:47 | Error log in production for testing

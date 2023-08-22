@@ -11,7 +11,7 @@ export class TicketManager extends MongoDao {
             const ticket = await this.model.find({});
             return ticket;
         } catch (error) {
-            console.log(error);
+            throw new Error(error.message);
         }
     }
 
@@ -22,7 +22,7 @@ export class TicketManager extends MongoDao {
             })
             return ticket;
         } catch (error) {
-            console.log(error);
+            throw new Error(error.message);
         }
     }
 
@@ -31,7 +31,7 @@ export class TicketManager extends MongoDao {
             const newTicket = await this.model.create(ticket)
             return newTicket;
         } catch (error) {
-            console.log(error);
+            throw new Error(error.message);
         }
     }
 }

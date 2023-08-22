@@ -8,8 +8,8 @@ import MongoStore from 'connect-mongo';
 import viewsRouter from './routes/ViewsRouter.js';
 import { Server } from 'socket.io';
 import { errorHandler } from './middlewares/errorHandler.js';
-import MongoProductsRouter from './routes/MongoProductsRouter.js'
-import MongoCartRouter from './routes/MongoCartRouter.js'
+import ProductsRouter from './routes/ProductsRouter.js'
+import CartRouter from './routes/CartRouter.js'
 import UsersRouter from './routes/UsersRouter.js'
 import passport from 'passport';
 import './passport/local.js'
@@ -17,8 +17,8 @@ import './passport/github.js'
 import config from '../config.js';
 import { isAdmin } from './middlewares/authRole.js';
 import TicketRouter from './routes/TicketRouter.js'
-
-
+import MockProductsRouter from './routes/MockProductRouter.js'
+import loggerTest from './routes/Router.js';
 
 const app = express();
 
@@ -32,7 +32,7 @@ app.set('view engine', 'handlebars');
 app.set('views', __dirname + '/views');
 app.use(
     session({
-        secret:'sessionKey',
+        secret: 'sessionKey',
         resave: false,
         saveUninitialized: true,
         store: new MongoStore({
@@ -40,20 +40,18 @@ app.use(
             ttl: 180,
         }),
     })
-    )
+    );
 app.use(passport.initialize());
 app.use(passport.session());
     
-    
 app.use('/views', viewsRouter);
 app.use('/users', UsersRouter);
-app.use('/products', MongoProductsRouter);
-app.use('/carts', MongoCartRouter);
-app.use('/tickets', TicketRouter)
-app.use('/admin', isAdmin)
-
-
-
+app.use('/products', ProductsRouter);
+app.use('/carts', CartRouter);
+app.use('/tickets', TicketRouter);
+app.use('/mockingProducts', MockProductsRouter);
+app.use('/admin', isAdmin);
+app.use('/loggerTest', loggerTest);
 
 const PORT = config.PORT || 8080;
 const httpServer = app.listen(PORT, () => {

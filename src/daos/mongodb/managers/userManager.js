@@ -47,7 +47,7 @@ export default class UserManager extends MongoDao {
             }
         } catch (error) {
             console.log(error);
-            throw new Error;
+            throw new Error(error.message);
         }
     }
 
@@ -65,7 +65,7 @@ export default class UserManager extends MongoDao {
             } return false;
         } catch (error) {
             console.log(error);
-            throw new Error;
+            throw new Error(error.message);
         }
     }
 
@@ -77,7 +77,7 @@ export default class UserManager extends MongoDao {
             } return false  
         } catch (error) {
             console.log(error);
-            throw new Error('Error fetching user by ID');
+            throw new Error(error.message);
         }
     }
 
@@ -89,7 +89,7 @@ export default class UserManager extends MongoDao {
             } return false;
         } catch (error) {
             console.log(error);
-            throw new Error;
+            throw new Error(error.message);
         }
     }
 }

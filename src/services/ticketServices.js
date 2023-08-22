@@ -12,7 +12,7 @@ export default class TicketService extends Services {
             const ticket = await ticketManager.getTickets()
             return ticket;
         } catch (error) {
-            console.log(error);
+            throw new Error(error.message);
         }
     }
 
@@ -21,7 +21,7 @@ export default class TicketService extends Services {
             const ticket = await ticketManager.getUserTicket(email)
             return ticket;
         } catch (error) {
-            console.log(error);
+            throw new Error(error.message);
         }
     }
 
@@ -30,7 +30,7 @@ export default class TicketService extends Services {
             const newTicket = await ticketManager.createTicket(ticket);
             return newTicket;
         } catch (error) {
-            console.log(error);
+            throw new Error(error.message);
         }
     }
 }
