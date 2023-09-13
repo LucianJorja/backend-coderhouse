@@ -19,8 +19,15 @@ import { isAdmin } from './middlewares/authRole.js';
 import TicketRouter from './routes/TicketRouter.js'
 import MockProductsRouter from './routes/MockProductRouter.js'
 import loggerTest from './routes/Router.js';
+import swaggerUI from 'swagger-ui-express';
+import swaggerJSDoc from 'swagger-jsdoc';
+import {info} from './docs/info.js'
+
 
 const app = express();
+const specs = swaggerJSDoc(info);
+
+app.use('/docs', swaggerUI.serve, swaggerUI.setup(specs));
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));

@@ -1,0 +1,33 @@
+components:
+  parameters:
+    schemas:
+      BodyNewProduct:
+        type: object
+        required:
+          - title
+          - description
+          - price
+          - stock
+          - category
+        properties:
+          title:
+            type: string
+            description: Product name.
+          description:
+            type: string
+            description: Description of the product.
+          price:
+            type: number
+            description: Product price.
+          stock: 
+            type: number
+            description: Stock of product units.
+          category:
+            type: string
+            description: Product category.
+        example:
+          title: remera
+          description: description for remera
+          price: 5000
+          stock: 15
+          category: remeras

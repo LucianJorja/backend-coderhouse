@@ -1,0 +1,102 @@
+components: 
+  schema:
+    Products:
+      NewProduct:
+        type: object
+        properties:
+          id:
+            type: string
+            description: Product ID
+          title: 
+            type: string
+            description: Product name
+          description:
+            type: string
+            description: Description of the product
+          price:
+            type: number
+            description: Product price
+          stock: 
+            type: number
+            description: Stock of product units.
+          category:
+            type: string
+            description: Product category.
+        example:
+          id: 648187638ccf4a4f498a96e3
+          title: remera
+          description: description for remera
+          price: 5000
+          stock: 15
+          category: remeras
+    GetAll:
+      type: array
+      items:
+        properties:
+          id:
+            type: string
+            description: Product Id 
+          title:
+            type: string
+            description: Name of the product
+          description: 
+            type: string
+            description: Description of the product
+          price:
+            type: number
+            description: Product price
+          stock: 
+            type: number
+            description: Stock of product units
+          category:
+            type: string
+            description: Product category
+    ValidationSchemaError:
+      type: object
+      properties:
+        message:
+          type: string
+          description: Schema validation error response.        
+      example:
+        message: Product is not valid.
+    NotFound:
+      type: object
+      properties:
+        message:
+          type: string
+          description: Server error message.
+      example:
+        message: Server Error.
+    ProductNotFound:
+      type: object
+      properties:
+        message:
+          type: string
+          description: Product not found error response.        
+      example:
+        message: Product not found!.
+    Carts:
+      Cart:
+        type: object
+        properties:
+          id: 
+            type: string
+            description: Cart ID
+          products:
+            type: array
+            items:
+              properties: 
+                id: 
+                  type: string
+                  description: Product ID
+                quantity:
+                  type: number
+                  description: Quantity of the product in the cart.
+      NotFoundCart:
+        type: object
+        properties:
+          message:
+            type: string
+            description: Cart not found error response.
+        example:
+          message: The cart you are trying to access does not exist.

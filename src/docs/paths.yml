@@ -1,0 +1,260 @@
+paths:
+  /products:
+    post:
+      tags: 
+      - New product.
+      summary: Registration of the new product in the database.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/parameters/schemas/BodyNewProduct'
+        required: true
+      responses:
+        200:
+          description: Product added successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Products/NewProduct'
+        400:
+          description: Bad Request, error not correct requirements.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Products/ValidationSchemaError'
+        500:
+          description: Internal server error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Products/NotFound'
+    get:
+      tags:
+      - Get all products
+      summary: Get all products from database.
+      responses:
+        200:
+          description: Array of products.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Products/GetAll'
+        500:
+          description: Internal server error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Products/NotFound'
+  /products/{id}:
+    get:
+      tags: 
+      - Search product by id.
+      summary: Brings the product by its id passed by parameters.
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+            format: ObjectId
+          description: The id of the product.
+      responses:
+        200:
+          description: Product found successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Products/NewProduct'
+        404:
+          description: Not Found, the id entered does not correspond to that of an existing product.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Products/ProductNotFound'
+        500:
+          description: Internal server error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Products/NotFound'
+    put:
+      tags: 
+      - Update existing product.
+      summary: Update the product with the new value sent by the body.
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+            format: ObjectId
+          description: The id of the product.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/parameters/schemas/BodyNewProduct'
+        required: true
+      responses:
+        200:
+          description: Product update successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Products/NewProduct'
+        404:
+          description: Not Found, the id entered does not correspond to that of an existing product.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Products/ProductNotFound'
+        500:
+          description: Internal server error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Products/NotFound'
+    delete:
+      tags: 
+      - Delete an existing product.
+      summary: Removes a product from the database with the id passed by params.
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+            format: ObjectId
+          description: The id of the product.
+      responses:
+        200:
+          description: Product deleted successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Products/NewProduct'
+        500:
+          description: Internal server error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Products/NotFound'
+  /carts:
+    get: 
+      tags: 
+        - Get the cart.
+      summary: Get the user cart by getting the id from the token payload.
+      responses:
+        200:
+          description: Cart found successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Carts/Cart'
+        500:
+          description: Internal server error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Products/NotFound'
+    post:
+      tags: 
+        - Create the cart.
+      summary: Create a cart.
+      responses:
+        200:
+          description: Cart Create successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Carts/Cart'
+        500:
+          description: Internal server error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Products/NotFound'
+    delete:
+      tags: 
+        - Delete all products to cart.
+      summary: Delete all products from the cart.
+      responses:
+        200:
+          description: Products deleted successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Carts/Cart'
+        404:
+          description: Not Found, the id entered does not correspond to that of an existing cart.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Carts/NotFoundCart'
+        500:
+          description: Internal server error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Products/NotFound'
+  /carts/{prodId}:
+    put:
+      tags: 
+        - Add a product to cart.
+      summary: Adds a product with id passed from parameters to the cart.
+      parameters:
+        - in: path
+          name: prodId
+          schema:
+            type: string
+            format: ObjectId
+          description: The id of the product.
+      responses:
+        200:
+          description: Product added successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Carts/Cart'
+        404:
+          description: Not Found, the id entered does not correspond to that of an existing product.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Products/ProductNotFound'
+        500:
+          description: Internal server error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Products/NotFound'
+    delete:
+      tags: 
+        - Delete a product to cart.
+      summary: Delete a product with id passed from parameters, to the user's cart.
+      security: 
+        - BearerAuth: []
+      parameters:
+        - in: path
+          name: prodId
+          schema:
+            type: string
+            format: ObjectId
+          description: The MongoDB id of the product.
+      responses:
+        200:
+          description: Product deleted successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Carts/Cart'
+        404:
+          description: Not Found, the id entered does not correspond to that of an existing product.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Products/ProductNotFound'
+        500:
+          description: Internal server error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Products/NotFound'
