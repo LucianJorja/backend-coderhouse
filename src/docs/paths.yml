@@ -1,9 +1,83 @@
 paths:
+  /users/register:
+    post:
+      tags: 
+      - User register with data sent by body.
+      summary: Register a new user in the database.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/parameters/schemas/BodyNewUser'
+        required: true
+      responses:
+        200:
+          description: User registered successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User/register'
+        400:
+          description: Bad Request, error not correct requirements.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Products/ValidationSchemaError'
+        409:
+          description: Conflict, there is already a registered user with that email.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User/EmailAlredyRegistered'
+        500:
+          description: Internal server error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Products/NotFound'
+  /users/login:
+    post:
+      tags: 
+      - User login with data sent by body.
+      summary: Login User.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/parameters/schemas/BodyLogin'
+        required: true
+      responses:
+        200:
+          description: User login successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Users/Login'
+        400:
+          description: Bad Request, error not correct requirements.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Products/ValidationSchemaError'
+        409:
+          description: Conflict, the user was registered with github must log in with Github.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Users/IsGithub'
+        500:
+          description: Internal server error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Products/NotFound'
   /products:
     post:
       tags: 
       - New product.
       summary: Registration of the new product in the database.
+      security: 
+        - BearerAuth: []
       requestBody:
         content:
           application/json:
@@ -33,6 +107,8 @@ paths:
       tags:
       - Get all products
       summary: Get all products from database.
+      security: 
+        - BearerAuth: []
       responses:
         200:
           description: Array of products.
@@ -117,6 +193,8 @@ paths:
       tags: 
       - Delete an existing product.
       summary: Removes a product from the database with the id passed by params.
+      security:
+        - BearerAuth: []  
       parameters:
         - in: path
           name: id
@@ -230,8 +308,6 @@ paths:
       tags: 
         - Delete a product to cart.
       summary: Delete a product with id passed from parameters, to the user's cart.
-      security: 
-        - BearerAuth: []
       parameters:
         - in: path
           name: prodId

@@ -1,6 +1,51 @@
 components:
   parameters:
     schemas:
+      BodyNewUser:
+        type: object
+        required: 
+          - firstName
+          - lastName
+          - email
+          - age
+          - password
+        properties:
+          firstName:
+            type: string
+            description: User first name.
+          lastName:
+            type: string
+            description: User last name.
+          email:
+            type: string
+            description: User email.
+          age:
+            type: number
+            description: User age.
+          password:
+            type: string
+            description: User password.
+        example:
+          firstName: Jorge
+          lastName: Selva
+          email: jorge@gmail.com
+          age: 25
+          password: '1234'
+      BodyLogin:
+        type: object
+        required: 
+          - email
+          - password
+        properties:
+          email:
+            type: string
+            description: User email.
+          password:
+            type: string
+            description: User password.
+        example:
+          email: jorge@gmail.com
+          password: '1234'
       BodyNewProduct:
         type: object
         required:
@@ -31,3 +76,8 @@ components:
           price: 5000
           stock: 15
           category: remeras
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

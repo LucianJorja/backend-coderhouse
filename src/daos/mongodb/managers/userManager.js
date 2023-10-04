@@ -144,9 +144,7 @@ export default class UserManager extends MongoDao {
 
     async convertToPremium(id) {
         try {
-            console.log('Updating user with ID:', id);
             const result = await userModel.updateOne({ _id: id }, { $set: { role: 'premium' } });
-            console.log(result);
             if(result){
                 return result;   
             } else return false

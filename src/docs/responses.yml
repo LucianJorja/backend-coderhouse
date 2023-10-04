@@ -1,5 +1,58 @@
 components: 
   schema:
+    Users:
+      Register:
+        type: object
+        properties:
+          id:
+            type: string
+            description: User auto-generated ID from MongoDB.
+          firstName:
+            type: string
+            description: User first name.
+          lastName:
+            type: string
+            description: User last name.
+          email:
+            type: string
+            description: User email.
+          role:
+            type: string
+            description: Roles with differents access.
+          isGithub:
+            type: boolean
+            description: Is registered with github.
+          cartId:
+            type: string
+            description: User cart ID.
+      EmailAlredyRegistered:
+        type: object
+        properties:
+          message: 
+            type: string
+            description: Error message conflict with email.
+        example:
+          message: Email already registered
+      Login:
+        type: object
+        properties:
+          message:
+            type: string
+            description: Login OK.
+          accessToken:
+            type: string
+            description: Jwt authorization token
+        example:
+          message: Login OK
+          accessToken: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NTFkYTQwMjE0MDBjNGE4OWM0Y2Y3NjEiLCJmaXJzdE5hbWUiOiJraWxlciIsImxhc3ROYW1lIjoibW0iLCJlbWFpbCI6ImtpbGxlcm0zMTI0QGdtYWlsLmNvbSIsImFnZSI6MTksImlhdCI6MTY5NjQ0MTQ4MCwiZXhwIjoxNjk2NDQyNjgwfQ.B7EouPFqwEDMkLVE4qeVSNz8tb52h7sLEZEI47bxd_0
+      IsGithub:
+        type: object
+        properties: 
+          message:
+            type: string
+            description: Is registered with github.
+        example:
+          message: isGithub
     Products:
       NewProduct:
         type: object
