@@ -30,4 +30,4 @@ cartSchema.pre('find', function(){
 
 
 
-export const CartModel = mongoose.model('cart', cartSchema);
+export const CartModel = mongoose.model('carts', cartSchema);

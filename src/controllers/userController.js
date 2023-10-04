@@ -4,19 +4,22 @@ import { createResponse, renderView } from "../middlewares/auth.js";
 import { userDto } from "../daos/mongodb/dtos/userDto.js";
 import UserManager from "../daos/mongodb/managers/userManager.js";
 import { createCartsService } from "../services/cartsServices.js";
+import { HttpResponse } from "../utils/httpResponse.js";
+import { logger } from "../utils/logger.js";
 const userService = new UserService();
 const userManager = new UserManager();
+const httpResponse = new HttpResponse();
 export default class UserController extends Controllers {
     constructor() {
         super(userService)
     }
 
-    getUserDto = async (req, res, next) =>  {
+    getUserDto = async (req, res, next) => {
         try {
             const isLoggedIn = req.session.passport
-            if (!isLoggedIn){
+            if (!isLoggedIn) {
                 renderView(res, 'products', isLoggedIn);
-            }else {
+            } else {
                 const user = await userManager.getUserById(req.session.user);
                 const userDto = new userDto(user);
                 req.session.userDto = userDto;
@@ -30,9 +33,9 @@ export default class UserController extends Controllers {
     register = async (req, res, next) => {
         try {
             const newCart = await createCartsService()
-            const userData = {...req.body, cartId: newCart._id}
+            const userData = { ...req.body, carts: newCart._id }
             const token = await this.service.register(userData);
-            const user = {token, cartId: newCart._id}
+            const user = { token, cartId: newCart._id }
             createResponse(res, 200, user);
         } catch (error) {
             next(error);
@@ -50,8 +53,8 @@ export default class UserController extends Controllers {
 
     profile = (req, res, next) => {
         try {
-            const { firstName, lastName, email, age } = req.user;
-            renderView(res, 'products', { firstName, lastName, email, age });
+            const { firstName, lastName, email, role } = req.user;
+            createResponse(res, 200, { firstName, lastName, email, role })
         } catch (error) {
             renderView(res, 'errorLogin', { error: error.message });
         }
@@ -80,6 +83,48 @@ export default class UserController extends Controllers {
         }
     };
 
+    getAllUsers = async (req, res, next) => {
+        try {
+            const users = await this.service.getUsers()
+            const userArray = users.map((user) => ({
+                firstName: user.firstName,
+                lastName: user.lastName,
+                email: user.email,
+                role: user.role,
+            }));
+            createResponse(res, 200, userArray);
+        } catch (error) {
+            createResponse(res, 500, { error: "Internal server error" });
+        }
+    }
+    async deleteInactiveUsers(req, res, next) {
+        try {
+            const twoDaysAgo = new Date();
+            twoDaysAgo.setDate(twoDaysAgo.getDate() - 2);
+
+            const inactiveUsers = await userManager.getInactiveUsers(twoDaysAgo);
+
+            await userManager.deleteInactiveUsers(inactiveUsers);
+
+            createResponse(res, 200, { message: 'Inactive users have been deleted and notified.' })
+        } catch (error) {
+            logger.error(error);
+            createResponse(res, 500, { error: "Internal server error" });
+        }
+    }
+
+    async convertUserToPremium(req, res, next) {
+        try {
+            const userId = req.params.userId;
+            if(req.user.role === 'admin'){
+                await userManager.convertToPremium(userId);
+                return httpResponse.OK(res, "User updated to premium")
+            }else return httpResponse.Unauthorized(res, 'Unauthorized user')
+        } catch (error) {
+            logger.error(error)
+            createResponse(res, 500, { error: "Internal server error" });
+        }
+    }
 }
 
 

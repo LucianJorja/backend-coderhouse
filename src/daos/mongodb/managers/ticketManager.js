@@ -1,6 +1,7 @@
 import MongoDao from "../mongoDao.js";
 import { TicketModel } from "../models/ticketModel.js";
 
+
 export class TicketManager extends MongoDao {
     constructor() {
         super(TicketModel);
@@ -32,6 +33,7 @@ export class TicketManager extends MongoDao {
             return newTicket;
         } catch (error) {
             throw new Error(error.message);
+            
         }
     }
 }

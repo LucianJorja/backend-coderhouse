@@ -1,5 +1,5 @@
+import { logger } from "../../../utils/logger.js";
 import { CartModel } from "../models/cartsModels.js";
-import { TicketModel } from "../models/ticketModel.js";
 
 export default class CartsDao {
     async getAllCarts() {
@@ -7,7 +7,7 @@ export default class CartsDao {
             const cart = await CartModel.find({})
             return cart;
         } catch (error) {
-            console.log(error);
+            logger.error(error.message)
         }
     }
 
@@ -16,7 +16,7 @@ export default class CartsDao {
             const cart = await CartModel.create(cartData);
             return cart;
         } catch (error) {
-            console.log(error);
+            logger.error(error.message)
         }
     }
 
@@ -26,7 +26,7 @@ export default class CartsDao {
                 .populate('products')
             return cart;
         } catch (error) {
-            console.log(error);
+            logger.error(error.message)
         }
     }
 
@@ -41,7 +41,7 @@ export default class CartsDao {
             await cart.save();
             return cart;
         } catch (error) {
-
+            logger.error(error.message)
         }
     }
 
@@ -58,7 +58,7 @@ export default class CartsDao {
             await cart.save();
             return cart;
         } catch (error) {
-            console.log(error);
+            logger.error(error.message)
         }
     }
 
@@ -68,7 +68,7 @@ export default class CartsDao {
             cart.products.push(productId);
             products.save();
         } catch (error) {
-            console.log(error);
+            logger.error(error.message)
         }
     }
 

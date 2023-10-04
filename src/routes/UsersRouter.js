@@ -7,7 +7,10 @@ const router = Router();
 
 router.post('/register', controller.register)
 router.post('/login', controller.login)
-router.get('/products', checkAuth, controller.profile);
+router.get('/profile', checkAuth, controller.profile);
+router.get('/', controller.getAllUsers);
+router.delete('/', controller.deleteInactiveUsers);
+router.put('/:userId', checkAuth, controller.convertUserToPremium)
 
 
 router.get('/logout', (req, res) => {

@@ -1,5 +1,11 @@
+import UserManager from "../daos/mongodb/managers/userManager.js";
 import { getAllService, createService, getServiceById, updateService, deleteServiceById } from "../services/productsServices.js";
-
+import { HttpResponse } from "../utils/httpResponse.js";
+import { logger } from "../utils/logger.js";
+import { createTransport } from "nodemailer";
+import config from "../../config.js";
+const httpResponse = new HttpResponse();
+const userManager = new UserManager();
 export const getAllController =  async (req, res, next) => {
     try {
         const {limit = 10, page = 1, sort, query} = req.query;
@@ -26,15 +32,23 @@ export const getAllController =  async (req, res, next) => {
             prev
         });
     } catch (error) {
+        logger.error(error)
         next(error);
     }
 }
 export const createController =  async (req, res, next) => {
     try {
+        const ownerEmail = req.user.email;
         const { title, description, price, stock, category } = req.body
-        const newProduct = await createService ({title, description, price, stock, category})
-        res.json(newProduct);
+        let role = 'user'
+        if (req.user.role === 'premium') {
+            role = 'premium'
+        }
+
+        const newProduct = await createService ({title, description, price, stock, category, ownerEmail, owner: role})
+        httpResponse.OK(res, newProduct);
     } catch (error) {
+        logger.error(error)
         next(error);
     }
 }
@@ -42,8 +56,9 @@ export const getControllerById =  async (req, res, next) => {
     try {
         const { id } = req.params;
         const doc = await getServiceById(id);
-        res.json(doc);
+        httpResponse.OK(res, doc)
     } catch (error) {
+        logger.error(error)
         next(error);
     }
 }
@@ -53,17 +68,57 @@ export const updateController =  async (req, res, next) => {
         const {title, description, price, stock, category} = req.body;
         await getServiceById(id);
         const updatedDoc = await updateService(id, {title, description, price, stock, category})
-        res.json(updatedDoc);
+        httpResponse.OK(res, updatedDoc)
     } catch (error) {
+        logger.error(error)
         next(error);
     }
 }
 export const delController =  async (req, res, next) => {
     try {
+        const ownerEmail = req.user.email;
         const { id } = req.params;
-        await deleteServiceById(id);
-        res.json({message: 'Deleted Successfully!'});
+        const product = await getServiceById(id);
+        if (!product) {
+            return httpResponse.NotFound(res,'Product not found');
+        }
+        const owner = product.owner;
+
+        if (!owner) {
+            return httpResponse.NotFound(res, 'Owner not found');
+        }
+
+        if (owner === 'premium') {
+            const transporter = createTransport({
+                service: 'gmail',
+                port: 465, 
+                secure: true,
+                auth: {
+                    user: config.EMAIL,
+                    pass: config.PASSWORD
+                }
+            });
+
+            const gmailOptions = {
+                from: config.ADMIN_EMAIL,
+                to: ownerEmail,
+                subject: 'Product Deletion Notification',
+                text: `Your premium account product '${product.title}' has been deleted.`,
+            };
+            const response = await transporter.sendMail(gmailOptions);
+            if(response) {
+                await deleteServiceById(id, response);
+                return httpResponse.OK(res, {message: 'Deleted successfully and email was successfully sent.'});
+            }else{
+                return httpResponse.NotFound(res, 'Couldnt proceed with the mail');
+            }
+        }else {
+            await deleteServiceById(id);
+            httpResponse.OK(res, {message: 'Deleted successfully'});
+        }
+
     } catch (error) {
+        logger.error(error)
         next(error);
     }
-}
+};

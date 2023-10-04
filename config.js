@@ -8,5 +8,7 @@ export default {
     CLIENT_ID: process.env.CLIENTID_GITHUB,
     ADMIN_EMAIL: process.env.ADMIN_EMAIL,
     ADMIN_PASSWORD: process.env.ADMIN_PASSWORD,
-    SECRET_KEY_JWT: process.env.SECRET_KEY_JWT
+    SECRET_KEY_JWT: process.env.SECRET_KEY_JWT,
+    EMAIL: process.env.MY_EMAIL,
+    PASSWORD: process.env.MY_PASSWORD
 }

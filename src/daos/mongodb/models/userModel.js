@@ -32,14 +32,18 @@
             required: true,
             default: false,
         },
-        cartId: {type: mongoose.Schema.Types.ObjectId,
-            ref: 'carts', 
+        carts: {type: mongoose.Schema.Types.ObjectId,
+            ref:'carts', 
             required: true
-        }
+        },    
+        lastActivity: {
+            type: Date,
+            default: Date.now,
+        },
     })
 
     userSchema.pre('find', function () {
         this.populate('carts');
     });
     
-export const userModel = mongoose.model('Users', userSchema)
+export const userModel = mongoose.model('users', userSchema)

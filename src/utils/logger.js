@@ -19,22 +19,10 @@ const consoleFormat = combine(
     printf((info) => `${info.level} | ${info.timestamp} | ${info.message}`)
 );
 
-const fileFormat = combine(
-    timestamp({
-        format: 'MMM-DD-YYYY HH:mm:ss'
-    }),
-    printf((info) => `${info.level} | ${info.timestamp} | ${info.message}`)
-);
-
-export const developmentLogger = createLogger({
+export const logger = createLogger({
     level: LOG_LEVELS.DEBUG,
     format: consoleFormat,
     transports: [new transports.Console()]
 });
 
-export const productionLogger = createLogger({
-    level: LOG_LEVELS.INFO,
-    format: fileFormat,
-    transports: [new transports.File({ filename: 'errors.log', level: LOG_LEVELS.ERROR })]
-});
 
