@@ -19,6 +19,6 @@ router.get('/logout', (req, res) => {
 })
 
 router.get('/register-github', passport.authenticate('github', { scope: ['user:email'] }))
-router.get('/profile-github', checkAuth, passport.authenticate('github', { scope: ['user:email'] }), controller.githubResponse)
+router.get('/profile-github', passport.authenticate('github', { scope: ['user:email'] }), controller.githubResponse)
 
 export default router;
