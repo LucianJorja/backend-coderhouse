@@ -72,7 +72,7 @@ export default class UserManager extends MongoDao {
 
     async getAllUsers() {
         try {
-            const users = await userModel.find({})
+            const users = await userModel.find({}).maxTimeMS(30000);
             return users;
         } catch (error) {
             logger.error(error)
